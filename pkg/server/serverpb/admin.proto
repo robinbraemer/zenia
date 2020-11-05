@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+package zenia.server.serverpb;
+
+option go_package = "serverpb";

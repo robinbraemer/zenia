@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package zenia.authorization.v1;
+
+import "zenia/authorization/v1/acl.proto";
+
+option go_package = "github.com/robinbraemer/zenia/api/zenia/authorization/v1";
+
+service AuthorizationService {
+  rpc Write(WriteRequest) returns (WriteResponse);
+}
+
+message WriteRequest {
+  Object object = 1;
+}
+
+message WriteResponse {}
