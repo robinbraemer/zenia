@@ -8,7 +8,7 @@ type UserSetExpression struct {
 // and specifies a function that takes and ObjectID and returns
 // a UserSetExpressionTree.
 type UserSetRewriteRule interface {
-	Rewrite(ObjectID) *UserSetExpressionTree
+	Rewrite(objectID string) *UserSetExpressionTree
 }
 
 // UserSetExpressionTree is an expression tree returned by
@@ -45,5 +45,5 @@ type UserSetExpressionTreeNode struct {
 // policies such as “look up the parent folder of the document
 // and inherit its viewers”.
 type TupleToUserSet interface {
-	Fetch(ObjectID) RelationTupleSet
+	//Fetch(objectID string) RelationTupleSet
 }

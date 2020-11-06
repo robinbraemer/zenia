@@ -31,5 +31,5 @@ type (
 func (s *Server) Write(
 	ctx context.Context, in *WriteRequest,
 ) (*WriteResponse, error) {
-
+	return nil, nil
 }
