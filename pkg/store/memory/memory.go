@@ -9,18 +9,19 @@ import (
 )
 
 // New returns a new in-memory server.Store.
-// It can only be used to run a single server
-// or local cluster in the same process for testing!
+// It is highly unoptimized, can only run in a
+// single server or local cluster in the same process
+// and should only be used for local testing!
 func New() *Memory {
 	return &Memory{
-		tuplesByNamespace: map[string][]item{},
-		namespaces:        namespaces{},
+		tuples:     map[string]item{},
+		namespaces: namespaces{},
 	}
 }
 
 type Memory struct {
-	tuplesByNamespace map[string][]item
-	namespaces        namespaces
+	tuples     map[string]item
+	namespaces namespaces
 }
 type namespaces []acl.Namespace
 
@@ -44,37 +45,49 @@ func (d *Memory) SaveNamespace(
 // Implement this interface
 //var _ server.Store = (*Memory)(nil)
 
-// By: shardID, objectID, relation, user, commit timestamp
 type item struct {
-	shardID string
 	acl.RelationTuple
 	commitTime time.Time
 }
 
 func (d *Memory) Exists(
-	_ context.Context, object acl.Object,
+	ctx context.Context, object acl.Object,
 	relation string, userID string,
 ) (ok bool, err error) {
-	for _, i := range d.tuplesByNamespace[object.Namespace] {
-		if !(strings.EqualFold(i.Relation, relation) &&
+
+	type expandItem struct {
+		object   acl.Object
+		relation string
+	}
+
+	var expand []expandItem
+	for _, i := range d.tuples {
+		if !(strings.EqualFold(i.Object.Namespace, object.Namespace) &&
+			strings.EqualFold(i.Relation, relation) &&
 			strings.EqualFold(i.Object.ID, object.ID)) {
 			continue
 		}
 
-		if len(i.User.ID) != 0 &&
+		if i.User.ID != "" &&
 			strings.EqualFold(i.User.ID, userID) {
 			return true, nil
 		}
 
-		ok2, err := d.Exists(context.TODO(), acl.Object{
-			Namespace: i.User.UserSet.Object.Namespace,
-			ID:        i.User.UserSet.Object.ID,
-		}, i.Relation, userID)
+		expand = append(expand, expandItem{
+			object: acl.Object{
+				Namespace: i.User.UserSet.Object.Namespace,
+				ID:        i.User.UserSet.Object.ID,
+			},
+			relation: i.Relation,
+		})
+	}
+	for _, e := range expand {
+		ok, err := d.Exists(ctx, e.object, e.relation, userID)
 		if err != nil {
 			return false, fmt.Errorf(
-				"error resolving checking relationship: %w", err)
+				"error checking expanded relationship: %w", err)
 		}
-		if ok2 {
+		if ok {
 			return true, nil
 		}
 	}
@@ -84,35 +97,54 @@ func (d *Memory) Exists(
 func (d *Memory) UserSets(
 	_ context.Context, object acl.Object, relation string,
 ) (set []acl.UserSet, err error) {
-	t, ok := d.tuplesByNamespace[object.Namespace]
-	if !ok {
-		return
-	}
-	for _, i := range t {
-		// optionally filter by relation
-		if len(relation) != 0 &&
-			!strings.EqualFold(i.Relation, relation) {
+	for _, t := range d.tuples {
+		if !strings.EqualFold(t.Object.Namespace, object.Namespace) {
 			continue
 		}
-		set = append(set, i.User.UserSet)
+		if !strings.EqualFold(t.Object.ID, object.ID) {
+			continue
+		}
+		// optionally filter by relation
+		if relation != "" &&
+			!strings.EqualFold(t.Relation, relation) {
+			continue
+		}
+		set = append(set, t.User.UserSet)
 	}
 	return
 }
 
 func (d *Memory) Save(_ context.Context, tuple acl.RelationTuple) error {
-	d.tuplesByNamespace[tuple.Object.Namespace] = append(
-		d.tuplesByNamespace[tuple.Object.Namespace], item{
-			shardID:       "",
-			RelationTuple: tuple,
-			commitTime:    time.Now().UTC(),
-		})
+	i := item{
+		RelationTuple: tuple,
+		commitTime:    time.Now().UTC(),
+	}
+	d.tuples[itemKey(i)] = i
 	return nil
+}
+
+func itemKey(i item) string {
+	return i.commitTime.String() + " " +
+		objectString(i.Object) + "#" +
+		i.Relation + "@" +
+		userString(i.User)
+}
+
+func objectString(o acl.Object) string {
+	return o.Namespace + ":" + o.ID
+}
+
+func userString(u acl.User) string {
+	if u.ID == "" {
+		return u.UserSet.Object.Namespace + "#" + u.UserSet.Object.ID
+	}
+	return u.ID
 }
 
 //func (d *Memory) GetRelationTuples(_ context.Context,
 //	ns string, oid string, relation string,
 //) (results []acl.RelationTuple, err error) {
-//	rt, ok := d.tuplesByNamespace[ns]
+//	rt, ok := d.tuples[ns]
 //	if !ok {
 //		return nil, server.ErrStorageItemNotFound
 //	}

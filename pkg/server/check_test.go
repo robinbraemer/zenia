@@ -14,10 +14,10 @@ import (
 
 // Tip: Do read from right to left.
 var tuples = []string{
-	"doc:readme#owner@10",                  // User 10 is an owner of doc:readme ("doc" = namespace, "readme" = object_id)
-	"group:sales#member@11",                // User 11 is member of the sales group.
-	"doc:readme#viewer@group:sales#member", // Members of sales group are viewers of readme document.
-	"doc:readme#parent@folder:ABC#...",     // doc:readme is in folder:ABC
+	"group:sales#member@11",
+	"doc:readme#owner@10",
+	"doc:readme#viewer@group:sales#member",
+	"doc:readme#parent@folder:ABC#...", // doc:readme is in folder:ABC
 	// "#..." represents a relation that does not affect the semantics of the tuple
 
 	//"doc:readme#viewer@13",
@@ -44,10 +44,33 @@ var checks = []struct {
 	given    string
 }{
 	{
-		name:     "a",
+		name:     "User 11 is member of the sales group",
 		expected: true,
-		given:    "doc:readme#owner@10",
+		given:    "group:sales#member@11",
 	},
+	{ // Given through "doc:readme#viewer@group:sales#member"
+		name:     "Members of sales group are viewers of doc:readme",
+		expected: true,
+		given:    "doc:readme#viewer@11",
+	},
+
+	// Test "case sensitivity".
+	{
+		name:     "case sensitivity: User 11 is not member of the sales GROUP",
+		expected: false,
+		given:    "GROUP:sales#member@11",
+	},
+	{
+		name:     "case sensitivity: User 11 is not member of the SALES group",
+		expected: false,
+		given:    "group:SALES#member@11",
+	},
+	{
+		name:     "case sensitivity: User 11 is not MEMBER of the sales group",
+		expected: false,
+		given:    "group:sales#MEMBER@11",
+	},
+
 	//{
 	//	name:     "not found relation on nonexistent user",
 	//	expected: false,

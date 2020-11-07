@@ -52,6 +52,9 @@ func (s *Server) Check(ctx context.Context, r *CheckRequest) (*CheckResponse, er
 			"error checking store has tuple (%s->%s UserID: %s): %w",
 			r.Object, r.Relation, r.UserID, err)
 	}
+	if ok {
+		return &CheckResponse{Exists: true}, nil
+	}
 
 	userSets, err := s.store.UserSets(ctx, r.Object, r.Relation)
 	if err != nil {
@@ -59,15 +62,34 @@ func (s *Server) Check(ctx context.Context, r *CheckRequest) (*CheckResponse, er
 			r.Object, r.Relation, err)
 	}
 
-	rule := s.userSetRewrite(r.Object.Namespace, r.Relation)
+	rule := s.getUserSetRewrite(r.Object.Namespace, r.Relation)
 	if rule != nil {
 		userSets = append(userSets, computedUserSet(rule, r.Object)...)
+	}
+
+	for _, set := range userSets {
+		// TODO in parallel... see paper
+		res, err := s.Check(ctx, &CheckRequest{
+			Object:   set.Object,
+			Relation: set.Relation,
+			UserID:   r.UserID,
+			Zookie:   r.Zookie,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if res.Exists {
+			return &CheckResponse{Exists: true}, nil
+		}
 	}
 
 	return &CheckResponse{Exists: ok}, nil
 }
 
 func computedUserSet(rule *acl.UserSetRewrite, object acl.Object) (set []acl.UserSet) {
+	if rule == nil {
+		return
+	}
 	for _, u := range rule.Union {
 		if u.ComputedUserSet.Relation == "" {
 			continue
@@ -80,7 +102,8 @@ func computedUserSet(rule *acl.UserSetRewrite, object acl.Object) (set []acl.Use
 	return
 }
 
-func (s *Server) userSetRewrite(namespace, relation string) *acl.UserSetRewrite {
+// returns cached userset rewrite rule
+func (s *Server) getUserSetRewrite(namespace, relation string) *acl.UserSetRewrite {
 	m, ok := s.userSetRewrites[namespace]
 	if !ok {
 		return nil

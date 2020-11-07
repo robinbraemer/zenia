@@ -118,8 +118,12 @@ type NamespaceConfig struct {
 // for Relations contained in a Namespace.
 type NamespaceStorageSettings struct {
 	// Sharding settings for the tuples in the namespace.
-	Sharding struct{}
+	Sharding struct {
+		// Defaults to "$OBJECT_ID",
+		// meaning shard id == object id.
+		ComputedIDExpression string `yaml:"computed_id_expression"`
+	} `yaml:"sharding,omitempty"`
 	// The encoding to optimize store of integer,
 	// string and other ObjectID formats.
-	ObjectIDEncoding interface{}
+	//ObjectIDEncoding interface{}
 }
