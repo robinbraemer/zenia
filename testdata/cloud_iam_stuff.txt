@@ -1,0 +1,47 @@
+	{
+      "bindings": [
+        {
+          "role": "roles/resourcemanager.organizationAdmin",
+          "members": [
+            "user:mike@example.com",
+            "group:admins@example.com",
+            "domain:google.com",
+            "serviceAccount:my-project-id@appspot.gserviceaccount.com"
+          ]
+        },
+        {
+          "role": "roles/resourcemanager.organizationViewer",
+          "members": ["user:eve@example.com"],
+          "condition": {
+            "title": "expirable access",
+            "description": "Does not grant access after Sep 2020",
+            "expression": "request.time < timestamp('2020-10-01T00:00:00.000Z')",
+          }
+        }
+      ]
+    }
+
+Note: bindingID is generated from resourceID + random bits
+
+#1 Query roles and their condition of policy's bindings:
+
+SELECT role, condition
+FROM iam_policy_binding
+WHERE
+	resource_id='12345' AND
+	member_type='user' AND
+	member='mike@example.com';
+
+#2 Filter bindings by condition locally
+bindings = loop bindings; match(binding, condition)
+
+#3 Perform internal check with Zenia
+
+Check for tuple:
+    iam:<resource uid>#<binding role>@<user>
+    e.g.: iam:12345#resourcemanager.organizationAdmin@`user:mike@example.com`
+
+
+
+
+
