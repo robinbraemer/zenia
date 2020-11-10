@@ -29,6 +29,10 @@ The primary keys required to identify a relation tuple are:
 */
 package acl
 
+import (
+	"encoding/json"
+)
+
 // Object is the object mapped by a RelationTuple.
 type Object struct {
 	Namespace string // The namespace of the Object.
@@ -41,11 +45,31 @@ type UserSet struct {
 	Relation string
 }
 
+// String implements fmt.Stringer.
+func (s *UserSet) String() string {
+	if s == nil {
+		return "<nil>"
+	}
+	b, _ := json.Marshal(s)
+	return string(b)
+}
+
 // User is the object mapped by a RelationTuple
 // and contains either a user id or a set of users.
 type User struct {
 	ID      string  // A user id.
 	UserSet UserSet // A user set.
+}
+
+// String implements fmt.Stringer.
+func (u *User) String() string {
+	if u == nil {
+		return "<nil>"
+	}
+	if u.ID != "" {
+		return u.ID
+	}
+	return u.UserSet.String()
 }
 
 // RelationTuple is an ACL entry that relates an Object to a User.
@@ -109,6 +133,8 @@ type NamespaceConfig struct {
 	// in the namespace.
 	Storage NamespaceStorageSettings `yaml:"storage"`
 }
+
+// TODO implement sql.Scan... interface
 
 // NamespaceStorageSettings are the store settings
 // for Relations contained in a Namespace.
