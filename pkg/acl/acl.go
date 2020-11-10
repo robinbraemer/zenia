@@ -115,8 +115,10 @@ type NamespaceConfig struct {
 type NamespaceStorageSettings struct {
 	// Sharding settings for the tuples in the namespace.
 	Sharding struct {
-		// Defaults to "$OBJECT_ID",
-		// meaning shard id == object id.
+		// Defaults to "$OBJECT_ID", meaning shard id == object id.
+		// In some cases, e.g. for namespaces storing large
+		// groups of with very large numbers of members
+		// the shard id is computed from both object id + user.
 		ComputedIDExpression string `yaml:"computed_id_expression"`
 	} `yaml:"sharding,omitempty"`
 	// The encoding to optimize store of integer,

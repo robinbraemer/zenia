@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
-	"zenia/pkg/acl"
+	"github.com/robinbraemer/zenia/pkg/acl"
 )
 
 // CheckRequest is a request to a Server.Check and
@@ -23,14 +23,12 @@ type CheckResponse struct {
 
 // Check answers the question of
 // "Does user U have relation R to object O?".
-//
-// Clients read relation tuples to display
-// ACLs or group membership to users, or to
-// prepare for a subsequent write.
 func (s *Server) Check(ctx context.Context, r *CheckRequest) (*CheckResponse, error) {
 	/*
 
-		(consider new table per namespace)
+		Consider new db table per namespace to decrease storage needs,
+		so the namespace per every row entry can get omitted.
+
 		namespace | object_id | relation | user_id | userset_namespace | userset_object_id | userset_relation
 		----------+-----------+----------+---------+-------------------+-------------------+-------------------
 		doc       | readme    | owner    | 10      | NULL              | NULL              | NULL

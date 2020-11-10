@@ -2,11 +2,11 @@ package testdata
 
 import (
 	"fmt"
+	"github.com/robinbraemer/zenia/pkg/acl"
 	"gopkg.in/yaml.v3"
 	"io"
 	"os"
 	"path/filepath"
-	"zenia/pkg/acl"
 )
 
 func LoadNamespaceConfigs(file string) (a []acl.Namespace, err error) {

@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 	"errors"
-	"zenia/pkg/acl"
+	"github.com/robinbraemer/zenia/pkg/acl"
 )
 
 // Server is a Zenia ACL server that is organized in a cluster.

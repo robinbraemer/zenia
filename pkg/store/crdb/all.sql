@@ -1,8 +1,6 @@
-CREATE TABLE relation_tuples (
-    shard_id VARCHAR,
-    object_id VARCHAR,
-    relation VARCHAR,
-    user VARCHAR,
+CREATE TABLE namespace_config (
+    namespace VARCHAR,
+    config JSONB,
     commit_time TIMESTAMP,
-    PRIMARY KEY (shard_id, object_id, relation, user, commit_time)
+    PRIMARY KEY (namespace, commit_time)
 );

@@ -3,13 +3,17 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/robinbraemer/zenia/pkg/acl"
+	crdbstore "github.com/robinbraemer/zenia/pkg/store/crdb"
+	crdbtesting "github.com/robinbraemer/zenia/pkg/store/crdb/testing"
+	"github.com/robinbraemer/zenia/testdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
+	"os"
 	"strings"
 	"testing"
-	"zenia/pkg/acl"
-	"zenia/pkg/store/memory"
-	"zenia/testdata"
+	"time"
 )
 
 // Tip: Do read from right to left.
@@ -109,9 +113,61 @@ var checks = []struct {
 	//},
 }
 
+var store *crdbstore.Crdb
+
+const migrateFile = "../all.sql"
+
+func TestMain(t *testing.M) {
+	if err := testMain(t); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+	os.Exit(0)
+}
+
+func testMain(t *testing.M) (err error) {
+	// Defer here so following defers run before.
+	defer func() {
+		if err != nil {
+			return
+		}
+		if exist := t.Run(); exist != 0 {
+			err = fmt.Errorf("test returned zero-exit code = %d", exist)
+		}
+	}()
+
+	// Prepare local database
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	store, err = crdbtesting.StartLocalSingleNode(ctx)
+	if err != nil {
+		return err
+	}
+	fmt.Println(store == nil)
+	defer store.CloseContext(ctx)
+
+	// Migrate db
+	if err := migrateDB(ctx, migrateFile); err != nil {
+		return fmt.Errorf("error migrate database: %v", err)
+	}
+	return nil
+}
+
+func migrateDB(ctx context.Context, sqlFile string) error {
+	sql, err := ioutil.ReadFile(sqlFile)
+	if err != nil {
+		return fmt.Errorf("error reading migration file %s: %v", sqlFile, err)
+	}
+	_, err = store.Exec(ctx, string(sql))
+	if err != nil {
+		return fmt.Errorf("error initializing database: %v", err)
+	}
+	return nil
+}
+
 func TestChecks(t *testing.T) {
 	// Create & init store
-	store := memory.New()
 	require.NoError(t, initStore(store))
 
 	// Create and init auth server

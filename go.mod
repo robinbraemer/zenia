@@ -1,11 +1,12 @@
-module zenia
+module github.com/robinbraemer/zenia
 
 go 1.14
 
 require (
+	github.com/cockroachdb/cockroach-go/v2 v2.0.8
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gogo/protobuf v1.3.1
-	github.com/jackc/pgx/v4 v4.9.2 // indirect
+	github.com/jackc/pgx/v4 v4.9.2
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20201031054903-ff519b6c9102 // indirect

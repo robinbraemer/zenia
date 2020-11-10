@@ -3,9 +3,9 @@ package memory
 import (
 	"context"
 	"fmt"
+	"github.com/robinbraemer/zenia/pkg/acl"
 	"strings"
 	"time"
-	"zenia/pkg/acl"
 )
 
 // New returns a new in-memory server.Store.
