@@ -29,10 +29,6 @@ The primary keys required to identify a relation tuple are:
 */
 package acl
 
-// ParentRelation is used to generally
-// refer to parent relation tuples.
-const ParentRelation = "parent"
-
 // Object is the object mapped by a RelationTuple.
 type Object struct {
 	Namespace string // The namespace of the Object.
