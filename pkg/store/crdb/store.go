@@ -57,7 +57,7 @@ func (db *Crdb) Save(ctx context.Context, tuple acl.RelationTuple) error {
 	return err
 }
 
-// TODO based of acl.NamespaceStorageSettings settings.Sharding.ComputedIDExpression
+// TODO computed based off from acl.NamespaceStorageSettings Sharding.ComputedIDExpression
 func (db *Crdb) newShardID(objectID string) string {
 	return objectID
 }
@@ -101,13 +101,24 @@ func (db *Crdb) GetNamespaces(ctx context.Context) (l []acl.Namespace, err error
 const (
 	// Namespaced relation tuple table
 	// TODO beware of sql injection!
+
+	// Storing a relation tuple:
+	//
+	// In the simple case there is an "exact" tuple entry which's
+	// subject is the exact subject id. The user id is stored in
+
+	// If the subject_relation is not null it indicates that the
+	// tuple's subject is a user set entry.
 	tupleTable = `
-CREATE TABLE %s (
-    shard_id VARCHAR,
-    object_id VARCHAR,
-    relation VARCHAR,
-    "user" VARCHAR,
+CREATE TABLE $1 (
+    shard_id VARCHAR(64),
+    object_id VARCHAR(64),
+    relation VARCHAR(64),
+    subject VARCHAR(128),
     commit_time TIMESTAMP,
+
+    subject_relation VARCHAR(64),
+
     PRIMARY KEY (shard_id, object_id, relation, "user", commit_time)
 )
 `
