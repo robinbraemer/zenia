@@ -20,7 +20,7 @@ import (
 	authz "authz/apiv1"
 	"context"
 
-	authzpb "github.com/robinbraemer/zenia/api/authz/zenia/v1"
+	authzpb "github.com/robinbraemer/zenia/api/zenia/authz/v1"
 )
 
 func ExampleNewAuthorizationClient() {
@@ -34,7 +34,7 @@ func ExampleNewAuthorizationClient() {
 }
 
 func ExampleAuthorizationClient_Check() {
-	// import authzpb "github.com/robinbraemer/zenia/api/authz/zenia/v1"
+	// import authzpb "github.com/robinbraemer/zenia/api/zenia/authz/v1"
 
 	ctx := context.Background()
 	c, err := authz.NewAuthorizationClient(ctx)

@@ -21,7 +21,7 @@ import (
 	"math"
 
 	gax "github.com/googleapis/gax-go/v2"
-	authzpb "github.com/robinbraemer/zenia/api/authz/zenia/v1"
+	authzpb "github.com/robinbraemer/zenia/api/zenia/authz/v1"
 	"google.golang.org/api/option"
 	"google.golang.org/api/option/internaloption"
 	gtransport "google.golang.org/api/transport/grpc"

@@ -5,7 +5,7 @@ package zenia.authz.v1;
 import "zenia/authz/v1/acl.proto";
 import "google/api/client.proto";
 
-option go_package = "github.com/robinbraemer/zenia/api/authz/zenia/v1;authz";
+option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/v1;authz";
 
 service AuthorizationService {
   option (google.api.default_host) = "authorization.exampleapis.com";

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package zenia.authz.v1;
 
-option go_package = "github.com/robinbraemer/zenia/api/authz/zenia/v1;authz";
+option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/v1;authz";
 
 message RelationTuple {
   Object object = 1;
