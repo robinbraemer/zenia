@@ -13,81 +13,81 @@ import (
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion7
 
-// AuthorizationServiceClient is the client API for AuthorizationService service.
+// AuthzServiceClient is the client API for AuthzService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AuthorizationServiceClient interface {
+type AuthzServiceClient interface {
 	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 }
 
-type authorizationServiceClient struct {
+type authzServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAuthorizationServiceClient(cc grpc.ClientConnInterface) AuthorizationServiceClient {
-	return &authorizationServiceClient{cc}
+func NewAuthzServiceClient(cc grpc.ClientConnInterface) AuthzServiceClient {
+	return &authzServiceClient{cc}
 }
 
-func (c *authorizationServiceClient) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
+func (c *authzServiceClient) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
 	out := new(CheckResponse)
-	err := c.cc.Invoke(ctx, "/zenia.authz.v1.AuthorizationService/Check", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/zenia.authz.v1.AuthzService/Check", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AuthorizationServiceServer is the server API for AuthorizationService service.
-// All implementations should embed UnimplementedAuthorizationServiceServer
+// AuthzServiceServer is the server API for AuthzService service.
+// All implementations should embed UnimplementedAuthzServiceServer
 // for forward compatibility
-type AuthorizationServiceServer interface {
+type AuthzServiceServer interface {
 	Check(context.Context, *CheckRequest) (*CheckResponse, error)
 }
 
-// UnimplementedAuthorizationServiceServer should be embedded to have forward compatible implementations.
-type UnimplementedAuthorizationServiceServer struct {
+// UnimplementedAuthzServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedAuthzServiceServer struct {
 }
 
-func (UnimplementedAuthorizationServiceServer) Check(context.Context, *CheckRequest) (*CheckResponse, error) {
+func (UnimplementedAuthzServiceServer) Check(context.Context, *CheckRequest) (*CheckResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
 }
 
-// UnsafeAuthorizationServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AuthorizationServiceServer will
+// UnsafeAuthzServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AuthzServiceServer will
 // result in compilation errors.
-type UnsafeAuthorizationServiceServer interface {
-	mustEmbedUnimplementedAuthorizationServiceServer()
+type UnsafeAuthzServiceServer interface {
+	mustEmbedUnimplementedAuthzServiceServer()
 }
 
-func RegisterAuthorizationServiceServer(s grpc.ServiceRegistrar, srv AuthorizationServiceServer) {
-	s.RegisterService(&_AuthorizationService_serviceDesc, srv)
+func RegisterAuthzServiceServer(s grpc.ServiceRegistrar, srv AuthzServiceServer) {
+	s.RegisterService(&_AuthzService_serviceDesc, srv)
 }
 
-func _AuthorizationService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthzService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthorizationServiceServer).Check(ctx, in)
+		return srv.(AuthzServiceServer).Check(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/zenia.authz.v1.AuthorizationService/Check",
+		FullMethod: "/zenia.authz.v1.AuthzService/Check",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthorizationServiceServer).Check(ctx, req.(*CheckRequest))
+		return srv.(AuthzServiceServer).Check(ctx, req.(*CheckRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _AuthorizationService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "zenia.authz.v1.AuthorizationService",
-	HandlerType: (*AuthorizationServiceServer)(nil),
+var _AuthzService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "zenia.authz.v1.AuthzService",
+	HandlerType: (*AuthzServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Check",
-			Handler:    _AuthorizationService_Check_Handler,
+			Handler:    _AuthzService_Check_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
