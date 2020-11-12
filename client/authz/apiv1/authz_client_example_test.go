@@ -23,9 +23,9 @@ import (
 	authzpb "github.com/robinbraemer/zenia/api/zenia/authz/v1"
 )
 
-func ExampleNewAuthorizationClient() {
+func ExampleNewClient() {
 	ctx := context.Background()
-	c, err := authz.NewAuthorizationClient(ctx)
+	c, err := authz.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
 	}
@@ -33,11 +33,11 @@ func ExampleNewAuthorizationClient() {
 	_ = c
 }
 
-func ExampleAuthorizationClient_Check() {
+func ExampleClient_Check() {
 	// import authzpb "github.com/robinbraemer/zenia/api/zenia/authz/v1"
 
 	ctx := context.Background()
-	c, err := authz.NewAuthorizationClient(ctx)
+	c, err := authz.NewClient(ctx)
 	if err != nil {
 		// TODO: Handle error.
 	}

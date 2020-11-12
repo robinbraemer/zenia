@@ -29,17 +29,17 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-var newAuthorizationClientHook clientHook
+var newClientHook clientHook
 
-// AuthorizationCallOptions contains the retry settings for each method of AuthorizationClient.
-type AuthorizationCallOptions struct {
+// CallOptions contains the retry settings for each method of Client.
+type CallOptions struct {
 	Check []gax.CallOption
 }
 
-func defaultAuthorizationClientOptions() []option.ClientOption {
+func defaultClientOptions() []option.ClientOption {
 	return []option.ClientOption{
-		internaloption.WithDefaultEndpoint("authorization.exampleapis.com:443"),
-		internaloption.WithDefaultMTLSEndpoint("authorization.exampleapis.com:443"),
+		internaloption.WithDefaultEndpoint("authz.exampleapis.com:443"),
+		internaloption.WithDefaultMTLSEndpoint("authz.exampleapis.com:443"),
 		option.WithGRPCDialOption(grpc.WithDisableServiceConfig()),
 		option.WithScopes(DefaultAuthScopes()...),
 		option.WithGRPCDialOption(grpc.WithDefaultCallOptions(
@@ -47,16 +47,16 @@ func defaultAuthorizationClientOptions() []option.ClientOption {
 	}
 }
 
-func defaultAuthorizationCallOptions() *AuthorizationCallOptions {
-	return &AuthorizationCallOptions{
+func defaultCallOptions() *CallOptions {
+	return &CallOptions{
 		Check: []gax.CallOption{},
 	}
 }
 
-// AuthorizationClient is a client for interacting with .
+// Client is a client for interacting with .
 //
 // Methods, except Close, may be called concurrently. However, fields must not be modified concurrently with method calls.
-type AuthorizationClient struct {
+type Client struct {
 	// Connection pool of gRPC connections to the service.
 	connPool gtransport.ConnPool
 
@@ -64,22 +64,22 @@ type AuthorizationClient struct {
 	disableDeadlines bool
 
 	// The gRPC API client.
-	authorizationClient authzpb.AuthorizationServiceClient
+	client authzpb.AuthzServiceClient
 
 	// The call options for this service.
-	CallOptions *AuthorizationCallOptions
+	CallOptions *CallOptions
 
 	// The x-goog-* metadata to be sent with each request.
 	xGoogMetadata metadata.MD
 }
 
-// NewAuthorizationClient creates a new authorization service client.
+// NewClient creates a new authz service client.
 //
-func NewAuthorizationClient(ctx context.Context, opts ...option.ClientOption) (*AuthorizationClient, error) {
-	clientOpts := defaultAuthorizationClientOptions()
+func NewClient(ctx context.Context, opts ...option.ClientOption) (*Client, error) {
+	clientOpts := defaultClientOptions()
 
-	if newAuthorizationClientHook != nil {
-		hookOpts, err := newAuthorizationClientHook(ctx, clientHookParams{})
+	if newClientHook != nil {
+		hookOpts, err := newClientHook(ctx, clientHookParams{})
 		if err != nil {
 			return nil, err
 		}
@@ -95,12 +95,12 @@ func NewAuthorizationClient(ctx context.Context, opts ...option.ClientOption) (*
 	if err != nil {
 		return nil, err
 	}
-	c := &AuthorizationClient{
+	c := &Client{
 		connPool:         connPool,
 		disableDeadlines: disableDeadlines,
-		CallOptions:      defaultAuthorizationCallOptions(),
+		CallOptions:      defaultCallOptions(),
 
-		authorizationClient: authzpb.NewAuthorizationServiceClient(connPool),
+		client: authzpb.NewAuthzServiceClient(connPool),
 	}
 	c.setGoogleClientInfo()
 
@@ -110,32 +110,32 @@ func NewAuthorizationClient(ctx context.Context, opts ...option.ClientOption) (*
 // Connection returns a connection to the API service.
 //
 // Deprecated.
-func (c *AuthorizationClient) Connection() *grpc.ClientConn {
+func (c *Client) Connection() *grpc.ClientConn {
 	return c.connPool.Conn()
 }
 
 // Close closes the connection to the API service. The user should invoke this when
 // the client is no longer required.
-func (c *AuthorizationClient) Close() error {
+func (c *Client) Close() error {
 	return c.connPool.Close()
 }
 
 // setGoogleClientInfo sets the name and version of the application in
 // the `x-goog-api-client` header passed on each request. Intended for
 // use by Google-written clients.
-func (c *AuthorizationClient) setGoogleClientInfo(keyval ...string) {
+func (c *Client) setGoogleClientInfo(keyval ...string) {
 	kv := append([]string{"gl-go", versionGo()}, keyval...)
 	kv = append(kv, "gapic", versionClient, "gax", gax.Version, "grpc", grpc.Version)
 	c.xGoogMetadata = metadata.Pairs("x-goog-api-client", gax.XGoogHeader(kv...))
 }
 
-func (c *AuthorizationClient) Check(ctx context.Context, req *authzpb.CheckRequest, opts ...gax.CallOption) (*authzpb.CheckResponse, error) {
+func (c *Client) Check(ctx context.Context, req *authzpb.CheckRequest, opts ...gax.CallOption) (*authzpb.CheckResponse, error) {
 	ctx = insertMetadata(ctx, c.xGoogMetadata)
 	opts = append(c.CallOptions.Check[0:len(c.CallOptions.Check):len(c.CallOptions.Check)], opts...)
 	var resp *authzpb.CheckResponse
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {
 		var err error
-		resp, err = c.authorizationClient.Check(ctx, req, settings.GRPC...)
+		resp, err = c.client.Check(ctx, req, settings.GRPC...)
 		return err
 	}, opts...)
 	if err != nil {

@@ -7,8 +7,8 @@ import "google/api/client.proto";
 
 option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/v1;authz";
 
-service AuthorizationService {
-  option (google.api.default_host) = "authorization.exampleapis.com";
+service AuthzService {
+  option (google.api.default_host) = "authz.exampleapis.com";
   rpc Check(CheckRequest) returns (CheckResponse);
 }
 
