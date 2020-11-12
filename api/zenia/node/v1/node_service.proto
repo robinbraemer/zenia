@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package zenia.node.v1;
+
+option go_package = "github.com/robinbraemer/zenia/api/zenia/admin/v1";
+
+// Internal node communication service.
+service NodeService {
+}

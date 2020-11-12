@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package zenia.authz.admin.v1;
+
+option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/admin/v1;admin";
+
+import "zenia/authz/admin/v1/namespace.proto";
+import "google/api/client.proto";
+
+
+service AdminService {
+  option (google.api.default_host) = "authorization.exampleapis.com";
+  rpc ApplyNamespace(ApplyNamespaceRequest) returns (ApplyNamespaceResponse);
+}
+
+message ApplyNamespaceRequest {
+  Namespace namespace = 1;
+}
+
+message ApplyNamespaceResponse {}

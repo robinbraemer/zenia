@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package zenia.authz.v1;
+
+option go_package = "github.com/robinbraemer/zenia/api/authz/zenia/v1;authz";
+
+message RelationTuple {
+  Object object = 1;
+  string relation = 2;
+  Subject subject = 3;
+}
+
+message Object {
+  string namespace = 1;
+  string id = 2;
+}
+
+message Subject {
+  oneof type {
+    string subject_id = 1;
+    SubjectSet subject_set = 2;
+  }
+}
+
+message SubjectSet {
+  string namespace = 1;
+  string object_id = 2;
+  string relation = 3;
+}

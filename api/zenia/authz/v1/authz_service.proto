@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package zenia.authz.v1;
+
+import "zenia/authz/v1/acl.proto";
+import "google/api/client.proto";
+
+option go_package = "github.com/robinbraemer/zenia/api/authz/zenia/v1;authz";
+
+service AuthorizationService {
+  option (google.api.default_host) = "authorization.exampleapis.com";
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+
+message CheckRequest {
+  Object object = 1;
+  string relation = 2;
+  string subject_id = 3;
+  // optional but highly recommend
+  string zookie = 4;
+  // follow subjectsets
+  bool expand = 5;
+}
+
+message CheckResponse {
+  bool allowed = 1;
+}

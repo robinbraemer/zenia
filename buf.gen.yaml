@@ -1,6 +1,6 @@
 version: v1beta1
 plugins:
-  - name: gogoslick
+  - name: go
     out: api
     opt: paths=source_relative
   - name: go-grpc

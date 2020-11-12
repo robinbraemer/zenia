@@ -2,7 +2,7 @@ package testdata
 
 import (
 	"fmt"
-	"github.com/robinbraemer/zenia/pkg/acl"
+	"github.com/robinbraemer/zenia/internal/acl"
 	"gopkg.in/yaml.v3"
 	"io"
 	"os"

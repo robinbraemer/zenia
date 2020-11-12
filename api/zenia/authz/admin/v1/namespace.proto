@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package zenia.authz.admin.v1;
+
+option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/admin/v1;admin";
+
+import "google/protobuf/duration.proto";
+
+message Namespace {
+  string name = 1;
+  NamespaceConfig config = 2;
+}
+
+message NamespaceConfig {
+  StorageConfig storage = 1;
+}
+
+message StorageConfig {
+  message Sharding {
+    // compute shard id:
+    //  - objectID
+    //  - relation
+    //  - ...
+    //
+    // So that: hash(objectId) / hash(objectId, relation) / ...
+    repeated string hash_parameters = 1;
+  }
+  Sharding sharding = 1;
+  google.protobuf.Duration garbage_collection_duration = 2;
+}

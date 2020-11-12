@@ -1,8 +1,8 @@
 COLOR := "\e[1;36m%s\e[0m\n"
 
-##### Compile proto files for go #####
-generate:
-	buf generate
+##### Compile proto files and generate gapic client for go #####
+gen:
+	./gen.sh
 
 ##### Plugins & tools #####
 grpc-install: gogo-protobuf-install
