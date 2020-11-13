@@ -5,8 +5,9 @@ go 1.14
 require (
 	github.com/cockroachdb/cockroach-go/v2 v2.0.8
 	github.com/gogo/protobuf v1.3.1 // indirect
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.4.3
 	github.com/googleapis/gax-go/v2 v2.0.5
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1 // indirect
 	github.com/jackc/pgx/v4 v4.9.2
 	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/valyala/fasttemplate v1.2.1 // indirect

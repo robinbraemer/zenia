@@ -4,11 +4,13 @@ package zenia.authz.v1;
 
 import "zenia/authz/v1/acl.proto";
 import "google/api/client.proto";
+import "google/api/http.proto";
 
 option go_package = "github.com/robinbraemer/zenia/api/zenia/authz/v1;authz";
 
 service AuthzService {
   option (google.api.default_host) = "authz.exampleapis.com";
+
   rpc Check(CheckRequest) returns (CheckResponse);
 }
 
